@@ -3,7 +3,7 @@
 <br>
 Consiste en una web de pedidos de comida a domicilio
 <br><br>
-Tecnologías utilizadas: Java, JSF, Primefaces, Omnifaces, EJB, JPA, HTML, CSS
+Tecnologías empleadas: Java, JSF, Primefaces, Omnifaces, EJB, JPA, HTML, CSS
 <br>Probado en un servidor Payara
 
 ## Algunas capturas
