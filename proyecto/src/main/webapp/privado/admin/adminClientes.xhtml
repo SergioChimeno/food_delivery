@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+
+    
+    <ui:define name="content">
+        
+        <h1 style="border-bottom: 1px solid #cbcccc;">
+            <h:form>
+                <p:commandLink action="#{controladorAdminCliente.setAccionNuevoCliente()}" 
+                    oncomplete="PF('dlgCliente').show()" update="frmDialogoCliente">
+                    <o:graphicImage height="35px" name="icono_anadir.svg" library="img" dataURI="true"/>
+                </p:commandLink>
+            Clientes
+            </h:form>
+        </h1>
+    
+        <h:form id="frmTablaClientes" >
+            <p:dataTable var="cliente" value="#{controladorAdminCliente.clientes}"  selectionMode="single" selection="#{controladorAdminCliente.clienteSeleccionado}"
+                         rowKey="#{cliente.id}" scrollable="true" scrollHeight="250">
+                
+                <p:ajax event="rowSelect" listener="#{controladorAdminCliente.onRowSelect}" update="frmTablaDirecciones" />
+                
+                <p:column headerText="Foto perfil">
+                    <o:graphicImage height="50px" value="#{cliente.imagen}" rendered="#{cliente.imagen!=null}" style="margin-left: 35px" 
+                                    dataURI="true"/>
+                    <o:graphicImage height="50px" library="img" name="usuario_default.png" rendered="#{cliente.imagen==null}"  style="margin-left: 35px" 
+                                    dataURI="true"/>
+                </p:column>
+                
+                <p:column headerText="Username"  filterBy="#{cliente.username}" filterMatchMode="contains">
+                    <h:outputText value="#{cliente.username}" />
+                </p:column>
+
+                <p:column headerText="Contraseña">
+                    <h:outputText value="********" />
+                </p:column>
+
+                <p:column headerText="Nombre">
+                    <h:outputText value="#{cliente.nombre}" />
+                </p:column>
+
+                <p:column headerText="Apellidos">
+                    <h:outputText value="#{cliente.apellidos}" />
+                </p:column>
+
+                <p:column headerText="Email" filterBy="#{cliente.email}" filterMatchMode="contains">
+                    <h:outputText value="#{cliente.email}" />
+                </p:column>
+
+                <p:column headerText="Telefono" filterBy="#{cliente.telefono}" filterMatchMode="contains">
+                    <h:outputText value="#{cliente.telefono}" />
+                </p:column>
+                
+                <p:column headerText="Acciones">
+                    <p:commandLink action="#{controladorAdminCliente.setAccionEditar(cliente)}"
+                                update="frmDialogoCliente" oncomplete="PF('dlgCliente').show()" >
+                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                    </p:commandLink>
+
+                    <p:commandLink update="frmTablaClientes,growl" action="#{controladorAdminCliente.eliminarCliente(cliente)}">
+                        <o:graphicImage height="35px" name="icono_eliminar.svg" library="img" dataURI="true"/>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+        
+        
+        <h1 style="border-bottom: 1px solid #cbcccc;">
+            <h:form>
+                <p:commandLink action="#{controladorAdminCliente.setAccionNuevoDireccion()}" 
+                    oncomplete="PF('dlgDireccion').show()" update="frmDialogoDireccion">
+                    <o:graphicImage height="35px" name="icono_anadir.svg" library="img" dataURI="true"/>
+                </p:commandLink>
+                Direcciones
+            </h:form>
+        </h1>
+        
+        <h:form id="frmTablaDirecciones">
+            <p:dataTable id="listaDirecciones" var="direccion" value="#{controladorAdminCliente.direcciones}">
+                <p:column headerText="País">
+                    <h:outputText value="#{direccion.pais}" />
+                </p:column>
+
+                <p:column headerText="Ciudad">
+                    <h:outputText value="#{direccion.ciudad}" />
+                </p:column>
+
+                <p:column headerText="Calle">
+                    <h:outputText value="#{direccion.calle}" />
+                </p:column>
+
+                <p:column headerText="Código postal">
+                    <h:outputText value="#{direccion.codigoPostal} " />
+                </p:column>
+
+                <p:column headerText="Numero">
+                    <h:outputText value="#{direccion.numero}" />
+                </p:column>
+
+                <p:column headerText="Puerta">
+                    <h:outputText value="#{direccion.puerta}" />
+                </p:column>
+
+                <p:column headerText="Información adicional">
+                    <h:outputText value="#{direccion.infoAdicional}" />
+                </p:column>
+                
+                <p:column headerText="Acciones">
+                    <p:commandLink action="#{controladorAdminCliente.setAccionEditar(direccion)}"
+                                update="frmDialogoDireccion" oncomplete="PF('dlgDireccion').show()" >
+                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                    </p:commandLink>
+
+                    <p:commandLink update="frmTablaDirecciones,growl" action="#{controladorAdminCliente.eliminarDireccion(direccion)}">
+                        <o:graphicImage height="35px" name="icono_eliminar.svg" library="img" dataURI="true"/>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog id="dialogoCliente" header="Datos del cliente" widgetVar="dlgCliente" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgCliente').initPosition()">
+            <h:form id="frmDialogoCliente" enctype="multipart/form-data">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="username" value="Nombre:"/>
+                    <p:inputText id="username" value="#{controladorAdminCliente.clienteSeleccionado.username}" required="true"/>
+
+                    <p:outputLabel for="contrasena" value="Contraseña:"/>
+                    <p:inputText id="contrasena" value="#{controladorAdminCliente.clienteSeleccionado.contrasena}" required="true"/>
+                    
+                    <p:outputLabel for="email" value="Email: "/>
+                    <p:inputText id="email" value="#{controladorAdminCliente.clienteSeleccionado.email}" required="true"/>
+
+                    <p:outputLabel for="telefono" value="Telefono:"/>
+                    <p:inputText id="telefono" value="#{controladorAdminCliente.clienteSeleccionado.telefono}" required="true"/>
+                    
+                    <p:outputLabel for="nombre" value="Nombre:"/>
+                    <p:inputText id="nombre" value="#{controladorAdminCliente.clienteSeleccionado.nombre}" required="true"/>
+                    
+                    <p:outputLabel for="apellidos" value="Apellidos:"/>
+                    <p:inputText id="apellidos" value="#{controladorAdminCliente.clienteSeleccionado.apellidos}" required="true"/>
+
+                    <p:outputLabel value="Imagen: "/>
+                    <p:fileUpload value="#{controladorAdminCliente.file}" mode="simple" skinSimple="true"/>
+                    
+                    
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Nuevo" update="frmTablaClientes,growl" action="#{controladorAdminCliente.nuevoCliente()}"
+                                     oncomplete="PF('dlgCliente').hide()" ajax="false" 
+                                     rendered="#{controladorAdminCliente.accion == 'N'}"/>
+                    <p:commandButton value="Actualizar" update="frmTablaClientes,growl" action="#{controladorAdminCliente.actualizarCliente()}"
+                                     oncomplete="PF('dlgCliente').hide()" ajax="false" 
+                                     rendered="#{controladorAdminCliente.accion == 'E'}"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgCliente').hide()"/>
+                </p:panel>
+                
+            </h:form>      
+        </p:dialog>
+        
+        
+        <p:dialog id="dialogoDireccion" header="Dirección" widgetVar="dlgDireccion" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgDireccion').initPosition()">
+            <h:form id="frmDialogoDireccion">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="pais" value="País:"/>
+                    <p:inputText id="pais" value="#{controladorAdminCliente.direccionTemporal.pais}" required="true"/>
+
+                    <p:outputLabel for="ciudad" value="Ciudad:"/>
+                    <p:inputText id="ciudad" value="#{controladorAdminCliente.direccionTemporal.ciudad}" required="true"/>
+
+                    <p:outputLabel for="calle" value="Calle: "/>
+                    <p:inputText id="calle" value="#{controladorAdminCliente.direccionTemporal.calle}" required="true"/>
+
+                    <p:outputLabel for="codigoPostal" value="Código postal:"/>
+                    <p:inputText id="codigoPostal" value="#{controladorAdminCliente.direccionTemporal.codigoPostal}" required="true"/>
+
+                    <p:outputLabel for="numero" value="Numero:"/>
+                    <p:inputText id="numero" value="#{controladorAdminCliente.direccionTemporal.numero}" required="true"/>
+
+                    <p:outputLabel for="puerta" value="Puerta:"/>
+                    <p:inputText id="puerta" value="#{controladorAdminCliente.direccionTemporal.puerta}"/>
+
+                    <p:outputLabel for="infoAdicional" value="Información adicional: "/>
+                    <p:inputText id="infoAdicional" value="#{controladorAdminCliente.direccionTemporal.infoAdicional}"/>
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Nuevo" update="frmTablaDirecciones,growl" 
+                                     action="#{controladorAdminCliente.nuevaDireccion()}" oncomplete="PF('dlgDireccion').hide()"
+                                     rendered="#{controladorAdminCliente.accion == 'N'}"/>
+                    <p:commandButton value="Actualizar" update="frmTablaDirecciones,growl" 
+                                     action="#{controladorAdminCliente.actualizarDireccion()}" oncomplete="PF('dlgDireccion').hide()"
+                                     rendered="#{controladorAdminCliente.accion == 'E'}"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgDireccion').hide()"/>
+                </p:panel>
+                
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+</ui:composition>

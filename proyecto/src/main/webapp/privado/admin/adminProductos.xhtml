@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+    
+    <ui:define name="content">
+        
+        <h1 style="border-bottom: 1px solid #cbcccc;">
+            <h:form>
+                <p:commandLink action="#{controladorAdminProductos.setAccionNuevo()}" 
+                    oncomplete="PF('dlgProducto').show()" update="frmDialogoProducto">
+                    <o:graphicImage height="35px" name="icono_anadir.svg" library="img" dataURI="true"/>
+                </p:commandLink>
+            Productos
+            </h:form>
+        </h1>
+    
+        <h:form id="frmTablaProductos" >
+            <p:dataTable var="producto" value="#{controladorAdminProductos.productos}" tableStyle="width:auto">
+
+                <p:column headerText="Foto">
+                    <o:graphicImage height="50px" value="#{producto.foto}" 
+                                    dataURI="true"/>
+                </p:column>
+                
+                <p:column headerText="Titulo" filterBy="#{producto.titulo}" filterMatchMode="contains">
+                    <h:outputText value="#{producto.titulo}" />
+                </p:column>
+            
+                <p:column headerText="Precio">
+                    <h:outputText value="#{producto.precio}" />
+                </p:column>
+                
+                <p:column headerText="Precio de envío">
+                    <h:outputText value="#{producto.precioEnvio}" />
+                </p:column>
+                
+                <p:column headerText="Tiempo estimado">
+                    <h:outputText value="#{producto.tiempoEstimado}" />
+                </p:column>
+
+                <p:column headerText="Descripción">
+                    <h:outputText value="#{producto.descripcion}" />
+                </p:column>
+                
+                <p:column headerText="Disponible">
+                    <h:outputText value="#{producto.disponible}" />
+                </p:column>
+
+                <p:column headerText="Valoraciones">
+                    <p:commandButton action="#{controladorAdminProductos.cargarComentarios(producto)}" update="frmDialogoReviews" value="Valoraciones" oncomplete="PF('dlgReviews').show();">
+                    </p:commandButton>
+                </p:column>
+                
+                <p:column headerText="Acciones">
+                    <p:commandLink action="#{controladorAdminProductos.setAccionEditar(producto)}"
+                                update="frmDialogoProducto" oncomplete="PF('dlgProducto').show()" >
+                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                    </p:commandLink>
+
+                    <p:commandLink update="frmTablaProductos,growl" action="#{controladorAdminProductos.eliminarEspecificacionProducto(producto)}">
+                        <o:graphicImage height="35px" name="icono_eliminar.svg" library="img" dataURI="true"/>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+        
+        
+        <p:dialog id="dialogoRestaurante" header="Datos" widgetVar="dlgProducto" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgProducto').initPosition()">
+            <h:form id="frmDialogoProducto" enctype="multipart/form-data">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="titulo" value="Titulo:"/>
+                    <p:inputText id="titulo" value="#{controladorAdminProductos.producto.titulo}" required="true"/>
+
+                    <p:outputLabel for="tiempoEstimado" value="Tiempo Estimado: "/>
+                    <p:inputText id="tiempoEstimado" value="#{controladorAdminProductos.producto.tiempoEstimado}"/>
+
+                    <p:outputLabel for="disponible" value="Disponible: "/>
+                    <p:selectOneMenu id="disponible" value="#{controladorAdminProductos.producto.disponible}">
+                        <f:selectItem itemLabel="Si" itemValue="#{true}" />
+                        <f:selectItem itemLabel="No" itemValue="#{false}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="precioEnvio" value="Precio de envio:"/>
+                    <p:inputNumber id="precioEnvio" symbol="€" value="#{controladorAdminProductos.producto.precioEnvio}" required="true"/>
+
+                    <p:outputLabel for="precio" value="Precio: "/>
+                    <p:inputNumber id="precio" symbol="€" value="#{controladorAdminProductos.producto.precio}" required="true"/>
+                    
+                    <p:outputLabel for="categoria" value="Categoria:  "/>
+                    <p:selectOneMenu id="categoria" value="#{controladorAdminProductos.producto.categoria.id}" required="true" > 
+                        <f:selectItems value="#{controladorAdminProductos.categorias}" var="categoria" 
+                                       itemLabel="#{categoria.nombre}" itemValue="#{categoria.id}" />
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="descripcion" value="Descripcion: "/>
+                    <p:inputTextarea cols="100" id="descripcion" value="#{controladorAdminProductos.producto.descripcion}"/>
+
+                    <p:outputLabel value="Imagen: "/>
+                    <p:fileUpload value="#{controladorAdminProductos.file}" mode="simple" skinSimple="true"/>
+                </h:panelGrid>
+                    
+
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Nuevo" update="frmTablaProductos,growl" action="#{controladorAdminProductos.nuevaEspecificacionProducto()}"
+                                     oncomplete="PF('dlgProducto').hide()" ajax="false" 
+                                     rendered="#{controladorAdminProductos.accion == 'N'}"/>
+                    <p:commandButton value="Actualizar" update="frmTablaProductos,growl" action="#{controladorAdminProductos.actualizarEspecificacionProducto()}"
+                                     oncomplete="PF('dlgProducto').hide()" ajax="false" 
+                                     rendered="#{controladorAdminProductos.accion == 'E'}"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgProducto').hide()"/>
+                </p:panel>
+                
+            </h:form>      
+        </p:dialog>
+        
+        
+        <!--     DIALOGO PARA MOSTRAR LAS REVIEWS      -->
+        <p:dialog id="dialogo" header="Valoraciones" widgetVar="dlgReviews" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgReviews').initPosition()">
+            <h:form id="frmDialogoReviews">
+
+                <h:panelGroup id="panelValoraciones">
+                    <p:repeat value="#{controladorAdminProductos.valoraciones}" var="valoracion">
+
+                        <h:panelGrid columns="2" style="margin-bottom: 20px">
+                            <p:outputPanel>
+
+                                <o:graphicImage height="70px" value="#{valoracion.cliente.imagen}" 
+                                                rendered="#{valoracion.cliente.imagen!=null}" dataURI="true"/>
+
+                                <o:graphicImage height="70px" library="img" name="usuario_default.png" 
+                                                rendered="#{valoracion.cliente.imagen==null}" dataURI="true"/>
+
+                                <p>#{valoracion.cliente.nombre}</p>
+                            </p:outputPanel>
+
+                            <p:outputPanel style="margin-left: 25px">
+
+                                <p>
+                                    <b>#{valoracion.titulo}</b> 
+                                    <h:outputText value="#{valoracion.fecha}" style="margin-left: 20px">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                    <p:rating value="#{valoracion.estrellas}" disabled="true"></p:rating>
+                                </p>
+                                <p>
+                                    #{valoracion.opinion}
+                                </p>
+
+                            </p:outputPanel>
+                        </h:panelGrid>
+                        <hr/>
+                    </p:repeat>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

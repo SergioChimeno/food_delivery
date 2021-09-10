@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosCuadricula.css"/>
+    </ui:define>
+    
+
+    <ui:define name="opcionesMenuBar">
+        <h:panelGroup id="busqueda" class="ui-inputgroup" style="display: inline-block !important;margin-right: 30px">
+            <p:inputText id="inputBusqueda" placeholder="Buscar" value="#{controladorProductos.textoBusqueda}" style="width: 300px !important" />
+            <p:commandButton icon="pi pi-search" value="#{controladorProductos.realizarBusqueda()}" styleClass="white-button">
+                <f:ajax  execute="busqueda" render="busqueda otroForm:gridProductos" />
+            </p:commandButton>
+        </h:panelGroup>
+    </ui:define>
+
+    
+    <ui:define name="content">
+        
+        <!-- CATEGORIAS -->
+        <h:form>
+            <p:carousel numVisible="4" headerText="Categorías" responsive="true" value="#{controladorProductos.categorias}" var="categoria">
+
+                <p:commandLink  action="#{controladorProductos.filtrarPorCategoria(categoria)}" update="otroForm:gridProductos">
+                    <p:panelGrid columns="1"  style="width:100%;margin:10px 0px;text-align:center"  styleClass="ui-panelgrid-blank">
+
+                        <o:graphicImage height="150px" value="#{categoria.imagen}" dataURI="true" />
+
+                        <h:outputText value="#{categoria.nombre}"/>
+
+                    </p:panelGrid>
+                </p:commandLink>
+
+            </p:carousel>
+        </h:form>
+        
+        
+        <!-- PRODUCTOS -->
+        <h:form id="otroForm">
+        
+            <p:dataGrid id="gridProductos" layout="grid" columns="4" value="#{controladorProductos.especificacionesProductos}" var="especificacionProducto">
+                
+                
+                <p:commandLink actionListener="#{controladorProductos.setProductoSeleccionado(especificacionProducto)}" action="/paginaProducto">
+                        <p:panelGrid columns="1"  style="margin:10px 0px;text-align:center;width: 100%"  styleClass="ui-panelgrid-blank">
+                            <o:graphicImage width="288px" value="#{especificacionProducto.foto}" dataURI="true"/>
+
+                            <span style="width: 288px;text-align: left;display: inline-block">
+                                <b style="font-size: 20px">#{especificacionProducto.titulo}</b> <span style="color: red">#{especificacionProducto.precio}$</span>
+                                <br/>#{controladorProductos.descripcionDeProductoCorta(especificacionProducto)}
+                            </span>
+                        </p:panelGrid>
+                </p:commandLink>
+                
+                
+            </p:dataGrid>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

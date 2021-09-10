@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition    xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        template="./../../templates/plantilla.xhtml"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:panel class="centrar">
+            <p:panel class="panelDatos">
+        
+                
+                <h1 style="border-bottom: 1px solid #cbcccc;">
+                    <h:form>
+                    <p:commandLink oncomplete="PF('dlgCliente').show()" update="frmCliente">
+                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                    </p:commandLink>
+                    Detalles del Cliente:
+                    </h:form>
+                </h1>
+
+                <h:panelGrid columns="2" id="panelCliente">
+
+                    <o:graphicImage height="300px" value="#{controladorPerfilCliente.cliente.imagen}" style="margin-left: 35px" 
+                                    dataURI="true" rendered="#{controladorPerfilCliente.cliente.imagen!=null}"/>
+                    <o:graphicImage height="300px" library="img" name="usuario_default.png" style="margin-left: 35px" 
+                                    dataURI="true" rendered="#{controladorPerfilCliente.cliente.imagen ==null}"/>
+
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Nombre de usuario: </b><br/>
+                            #{controladorPerfilCliente.cliente.username}
+                        </p>
+                        <p>
+                            <b>Email: </b><br/>
+                            #{controladorPerfilCliente.cliente.email}
+                        </p>
+                        <p>
+                            <b>Nombre: </b><br/>
+                            #{controladorPerfilCliente.cliente.nombre}
+                        </p>
+                        <p>
+                            <b>Apellidos: </b><br/>
+                            #{controladorPerfilCliente.cliente.apellidos} 
+                        </p>
+                        <p>
+                            <b>Telefono: </b><br/>
+                            #{controladorPerfilCliente.cliente.telefono}
+                        </p>
+                    </p:panel>
+
+                </h:panelGrid>
+                
+
+                
+                <h1 style="border-bottom: 1px solid #cbcccc;">
+                    
+                    <h:form>
+                        <p:commandLink action="#{controladorPerfilCliente.setAccionNuevo()}" 
+                            oncomplete="PF('dlgDireccion').show()" update="frmDireccion">
+                            <o:graphicImage height="35px" name="icono_anadir.svg" library="img" dataURI="true"/>
+                        </p:commandLink>
+                        Direcciones:
+                    </h:form>
+                </h1>
+                
+                
+                
+                <h:form id="frmAccionesDireccion">
+                    <p:dataTable id="listaDirecciones" var="direccion" value="#{controladorPerfilCliente.direcciones}">
+                        <p:column headerText="País">
+                            <h:outputText value="#{direccion.pais}" />
+                        </p:column>
+
+                        <p:column headerText="Ciudad">
+                            <h:outputText value="#{direccion.ciudad}" />
+                        </p:column>
+
+                        <p:column headerText="Calle">
+                            <h:outputText value="#{direccion.calle}" />
+                        </p:column>
+
+                        <p:column headerText="Código postal">
+                            <h:outputText value="#{direccion.codigoPostal} " />
+                        </p:column>
+
+                        <p:column headerText="Numero">
+                            <h:outputText value="#{direccion.numero}" />
+                        </p:column>
+
+                        <p:column headerText="Puerta">
+                            <h:outputText value="#{direccion.puerta}" />
+                        </p:column>
+
+                        <p:column headerText="Información adicional">
+                            <h:outputText value="#{direccion.infoAdicional}" />
+                        </p:column>
+
+                        <p:column headerText="Acciones">
+                            <p:commandLink action="#{controladorPerfilCliente.setAccionEditar(direccion)}"
+                                        update="frmDireccion" oncomplete="PF('dlgDireccion').show()" >
+                                <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                            </p:commandLink>
+
+                            <p:commandLink update="listaDirecciones,growl" action="#{controladorPerfilCliente.eliminarDireccion(direccion)}">
+                                <o:graphicImage height="35px" name="icono_eliminar.svg" library="img" dataURI="true"/>
+                            </p:commandLink>
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form>
+
+                
+
+
+            </p:panel>
+
+        </p:panel>
+        
+
+        <p:dialog id="dialogoCliente" header="Datos del cliente" widgetVar="dlgCliente" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgCliente').initPosition()">
+            <h:form id="frmCliente" enctype="multipart/form-data">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="username" value="Nombre:"/>
+                    <p:inputText id="username" value="#{controladorPerfilCliente.cliente.username}" required="true"/>
+
+                    <p:outputLabel for="contrasena" value="Contraseña:"/>
+                    <p:inputText id="contrasena" value="#{controladorPerfilCliente.cliente.contrasena}" required="true"/>
+                    
+                    <p:outputLabel for="email" value="Email: "/>
+                    <p:inputText id="email" value="#{controladorPerfilCliente.cliente.email}" required="true"/>
+
+                    <p:outputLabel for="telefono" value="Telefono:"/>
+                    <p:inputText id="telefono" value="#{controladorPerfilCliente.cliente.telefono}" required="true"/>
+                    
+                    <p:outputLabel for="nombre" value="Nombre:"/>
+                    <p:inputText id="nombre" value="#{controladorPerfilCliente.cliente.nombre}" required="true"/>
+                    
+                    <p:outputLabel for="apellidos" value="Apellidos:"/>
+                    <p:inputText id="apellidos" value="#{controladorPerfilCliente.cliente.apellidos}" required="true"/>
+
+                    <p:outputLabel value="Imagen: "/>
+                    <p:fileUpload value="#{controladorPerfilCliente.file}" mode="simple" skinSimple="true"/>
+                    
+                    
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Actualizar" update="panelCliente,growl" action="#{controladorPerfilCliente.actualizarCliente()}" oncomplete="PF('dlgCliente').hide()" ajax="false"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgCliente').hide()"/>
+                </p:panel>
+                
+            </h:form>      
+        </p:dialog>
+        
+        
+        <p:dialog id="dialogoDireccion" header="Dirección" widgetVar="dlgDireccion" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgDireccion').initPosition()">
+            <h:form id="frmDireccion">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="pais" value="País:"/>
+                    <p:inputText id="pais" value="#{controladorPerfilCliente.direccionTemporal.pais}" required="true"/>
+
+                    <p:outputLabel for="ciudad" value="Ciudad:"/>
+                    <p:inputText id="ciudad" value="#{controladorPerfilCliente.direccionTemporal.ciudad}" required="true"/>
+
+                    <p:outputLabel for="calle" value="Calle: "/>
+                    <p:inputText id="calle" value="#{controladorPerfilCliente.direccionTemporal.calle}" required="true"/>
+
+                    <p:outputLabel for="codigoPostal" value="Código postal:"/>
+                    <p:inputText id="codigoPostal" value="#{controladorPerfilCliente.direccionTemporal.codigoPostal}" required="true"/>
+
+                    <p:outputLabel for="numero" value="Numero:"/>
+                    <p:inputText id="numero" value="#{controladorPerfilCliente.direccionTemporal.numero}" required="true"/>
+
+                    <p:outputLabel for="puerta" value="Puerta:"/>
+                    <p:inputText id="puerta" value="#{controladorPerfilCliente.direccionTemporal.puerta}"/>
+
+                    <p:outputLabel for="infoAdicional" value="Información adicional: "/>
+                    <p:inputText id="infoAdicional" value="#{controladorPerfilCliente.direccionTemporal.infoAdicional}"/>
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Nuevo" update="frmAccionesDireccion,growl" 
+                                     action="#{controladorPerfilCliente.nuevaDireccion()}" oncomplete="PF('dlgDireccion').hide()"
+                                     rendered="#{controladorPerfilCliente.accion == 'N'}"/>
+                    <p:commandButton value="Actualizar" update="frmAccionesDireccion,growl" 
+                                     action="#{controladorPerfilCliente.actualizarDireccion()}" oncomplete="PF('dlgDireccion').hide()"
+                                     rendered="#{controladorPerfilCliente.accion == 'E'}"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgDireccion').hide()"/>
+                </p:panel>
+                
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
+

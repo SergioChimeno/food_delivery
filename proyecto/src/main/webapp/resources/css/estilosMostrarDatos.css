@@ -1,0 +1,25 @@
+th{
+    background-color:#007ad9 !important;
+    color: white !important;
+    font-size: 18px !important;
+}
+
+.centrar{
+    text-align: center !important;
+    width: 100% !important;
+}
+
+.panelDatos{
+    display: inline-block;
+    max-width: 1100px;
+    width:100%;
+}
+
+.panelTexto{
+    text-align: left !important; 
+    margin-left: 35px
+}
+
+.ui-panel .ui-panel-content{
+    border: none !important;
+}

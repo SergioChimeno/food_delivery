@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+    
+    <ui:define name="content">
+        <p:panel class="centrar">
+            <p:panel class="panelDatos">
+
+                <h1 style="border-bottom: 1px solid #cbcccc;">
+                    <h:form>
+                        <p:commandLink oncomplete="PF('dlgAdmin').show()" update="frmAdmin">
+                            <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                        </p:commandLink>
+                        Datos del administrador
+                    </h:form>
+                </h1>
+
+                <h:panelGrid columns="2" id="panelAdmin">
+
+                    <o:graphicImage height="300px" value="#{controladorPerfilAdmin.admin.imagen}" style="margin-left: 35px" 
+                                    dataURI="true" rendered="#{controladorPerfilAdmin.admin.imagen!=null}"/>
+                    <o:graphicImage height="300px" library="img" name="usuario_default.png" style="margin-left: 35px" 
+                                    dataURI="true" rendered="#{controladorPerfilAdmin.admin.imagen ==null}"/>
+
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Nombre de usuario: </b><br/>
+                            #{controladorPerfilAdmin.admin.username}
+                        </p>
+                        <p>
+                            <b>Email: </b><br/>
+                            #{controladorPerfilAdmin.admin.email}
+                        </p>
+                        <p>
+                            <b>DNI: </b><br/>
+                            #{controladorPerfilAdmin.admin.DNI}
+                        </p>
+                        <p>
+                            <b>Contraseña: </b><br/>
+                            ********
+                        </p>
+                    </p:panel>
+                </h:panelGrid>
+            </p:panel>
+        </p:panel>
+        
+
+        <p:dialog id="dialogoAdmin" header="Datos del cliente" widgetVar="dlgAdmin" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgAdmin').initPosition()">
+            <h:form id="frmAdmin" enctype="multipart/form-data">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="username" value="Nombre:"/>
+                    <p:inputText id="username" value="#{controladorPerfilAdmin.admin.username}" required="true"/>
+
+                    <p:outputLabel for="contrasena" value="Contraseña:"/>
+                    <p:inputText id="contrasena" value="#{controladorPerfilAdmin.admin.contrasena}" required="true"/>
+                    
+                    <p:outputLabel for="email" value="Email: "/>
+                    <p:inputText id="email" value="#{controladorPerfilAdmin.admin.email}" required="true"/>
+
+                    <p:outputLabel for="DNI" value="DNI"/>
+                    <p:inputText id="DNI" value="#{controladorPerfilAdmin.admin.DNI}" required="true"/>
+
+                    <p:outputLabel value="Imagen: "/>
+                    <p:fileUpload value="#{controladorPerfilAdmin.file}" mode="simple" skinSimple="true"/>
+                    
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Actualizar" update="frmAdmin,growl,panelAdmin" action="#{controladorPerfilAdmin.actualizarAdmin()}" oncomplete="PF('dlgCliente').hide()" ajax="false"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgAdmin').hide()"/>
+                </p:panel>
+                
+            </h:form>      
+        </p:dialog>
+
+    </ui:define>
+
+    
+</ui:composition>

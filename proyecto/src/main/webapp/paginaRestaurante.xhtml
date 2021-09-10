@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition    xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        template="./templates/plantilla.xhtml"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions">
+
+
+    <!--     BUSCAR UN PRODUCTO      -->
+    <ui:define name="opcionesMenuBar">
+        <h:panelGroup id="busqueda" class="ui-inputgroup" style="display: inline-block !important;margin-right: 30px">
+            <p:inputText id="inputBusqueda" placeholder="Buscar" value="#{controladorPaginaRestaurante.textoBusqueda}" style="width: 300px !important" />
+            <p:commandButton icon="pi pi-search" value="#{controladorPaginaRestaurante.realizarBusqueda()}" styleClass="white-button">
+                <f:ajax  execute="busqueda" render="busqueda :frmProductos" />
+            </p:commandButton>
+        </h:panelGroup>
+    </ui:define>
+
+    <!--     RESTAURANTE      -->
+    <ui:define name="content">
+
+        <h1>#{controladorPaginaRestaurante.restaurante.username}</h1>
+
+        <h:panelGrid columns="2" style="margin: 40px 0px">
+            <div>
+                <p>
+                    <b>Horario: </b><br/>
+                    #{controladorPaginaRestaurante.restaurante.horario}
+                </p>
+                <p>
+                    <b>Información: </b><br/>
+                    #{controladorPaginaRestaurante.restaurante.informacion}
+                </p>
+                <p>
+                    <b>Contacto: </b><br/>
+                    #{controladorPaginaRestaurante.restaurante.email} - #{controladorPaginaRestaurante.restaurante.telefono} 
+                </p>
+                <p>
+                    <b>Dirección: </b><br/>
+                    #{controladorPaginaRestaurante.restaurante.direccion}
+                </p>
+            </div>
+
+            <o:graphicImage height="300px" value="#{controladorPaginaRestaurante.restaurante.imagen}" style="margin-left: 35px" dataURI="true"/>
+
+        </h:panelGrid>
+
+        <h1>Lista de Productos:</h1>
+
+        <hr/>
+        <!--     LISTA DE PRODUCTOS      -->
+
+        <h:form id="frmProductos">
+            <p:repeat id="listaProductos" value="#{controladorPaginaRestaurante.productos}" var="producto">
+
+                <h:panelGrid columns="2" style="margin: 40px 0px" >
+
+                    <o:graphicImage height="400px" value="#{producto.foto}" dataURI="true"/>
+
+                    <h:panelGrid style="margin-left: 40px;" >
+                        <h1>
+                            #{producto.titulo} 
+                            <span style="color: red">#{controladorPaginaRestaurante.disponible(producto)}</span>
+                        </h1>
+
+                            <b>Precio: </b>
+                            #{producto.precio}
+                        <br/>
+                            <b>Precio de envío: </b>
+                            #{producto.precioEnvio}
+                        <br/>
+                            <b>Tiempo estimado: </b>
+                            #{producto.tiempoEstimado}
+                        <p>
+                            <b>Descripción: </b><br/>
+                            #{producto.descripcion}
+                        </p>
+                        <br/>
+
+                        <p:commandButton value="Añadir al carro" disabled="#{!controladorPaginaRestaurante.usuarioLogeado() || !producto.disponible}"
+                                         action="#{controladorCarro.accionARealizar(controladorPaginaRestaurante.restaurante,producto)}" update="dialogosCarro"/>
+                        
+                        <p:outputLabel style="color: red " rendered="#{!controladorPaginaRestaurante.usuarioLogeado() and producto.disponible}" value="*Debes estar logeado para poder comprar"></p:outputLabel>
+                        <p:outputLabel style="color: red " rendered="#{!producto.disponible}" value="*No esta disponible en estos momentos"></p:outputLabel>
+ 
+                        
+                    </h:panelGrid>                    
+                    
+                    <h:panelGrid style="width: 100% !important; text-align: center !important">
+                        <p:commandButton action="#{controladorPaginaRestaurante.cargarComentarios(producto)}" update="otroForm:panelValoraciones" value="Valoraciones" oncomplete="PF('dlgReviews').show();">
+                        </p:commandButton>
+                    </h:panelGrid>
+                </h:panelGrid>
+                <hr/>
+
+            </p:repeat>
+        </h:form>
+
+
+            <!--     DIALOGO PARA MOSTRAR LAS REVIEWS      -->
+        <h:form id="otroForm">
+            <p:dialog id="dialogo" header="Valoraciones" widgetVar="dlgReviews" modal="true" resizable="false" closeOnEscape="true"
+                      onShow="PF('dlgReviews').initPosition()">
+
+                
+                <h:panelGrid columns="2" style="margin-bottom: 20px">
+                    <p:outputPanel>
+                        
+                        <o:graphicImage height="70px" value="#{controladorPaginaRestaurante.usuarioActual.imagen}" 
+                                        rendered="#{controladorPaginaRestaurante.usuarioLogeado() and controladorPaginaRestaurante.usuarioActual.imagen!=null}" dataURI="true"/>
+
+                        <o:graphicImage height="70px" library="img" name="usuario_default.png" 
+                                        rendered="#{!(controladorPaginaRestaurante.usuarioLogeado() and controladorPaginaRestaurante.usuarioActual.imagen!=null)}" dataURI="true"/>
+
+                        <p>#{controladorPaginaRestaurante.nombreUsuario}</p>
+                    </p:outputPanel>
+
+                    <p:outputPanel style="margin-left: 25px" id="formComentario">
+                        <p>
+                            <p:inputText  value="#{controladorPaginaRestaurante.nuevaValoracion.titulo}" required="true" disabled="#{!controladorPaginaRestaurante.usuarioLogeado()}"/>
+                            <p:rating value="#{controladorPaginaRestaurante.nuevaValoracion.estrellas}" disabled="#{!controladorPaginaRestaurante.usuarioLogeado()}">
+                            </p:rating>
+                        </p>
+                        <p>
+                            <p:inputTextarea cols="100" rows="7" value="#{controladorPaginaRestaurante.nuevaValoracion.opinion}" disabled="#{!controladorPaginaRestaurante.usuarioLogeado()}" required="true"/>
+                        </p>
+                        <p:commandButton update="growl,panelValoraciones,formComentario" value="Comentar" action="#{controladorPaginaRestaurante.guardarValoracion()}" disabled="#{!controladorPaginaRestaurante.usuarioLogeado()}"/>
+                    </p:outputPanel>
+                </h:panelGrid>
+
+                <hr/>
+
+                <h:panelGroup id="panelValoraciones">
+                    <p:repeat value="#{controladorPaginaRestaurante.valoraciones}" var="valoracion">
+
+                        <h:panelGrid columns="2" style="margin-bottom: 20px">
+                            <p:outputPanel>
+
+                                <o:graphicImage height="70px" value="#{valoracion.cliente.imagen}" 
+                                                rendered="#{valoracion.cliente.imagen!=null}" dataURI="true"/>
+
+                                <o:graphicImage height="70px" library="img" name="usuario_default.png" 
+                                                rendered="#{valoracion.cliente.imagen==null}" dataURI="true"/>
+
+                                <p>#{valoracion.cliente.nombre}</p>
+                            </p:outputPanel>
+
+                            <p:outputPanel style="margin-left: 25px">
+
+                                <p>
+                                    <b>#{valoracion.titulo}</b> 
+                                    <h:outputText value="#{valoracion.fecha}" style="margin-left: 20px">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                    <p:rating value="#{valoracion.estrellas}" disabled="true"></p:rating>
+                                </p>
+                                <p>
+                                    #{valoracion.opinion}
+                                </p>
+
+                            </p:outputPanel>
+                        </h:panelGrid>
+                        <hr/>
+                    </p:repeat>
+                </h:panelGroup>
+                
+            </p:dialog>
+        
+        </h:form>
+            
+            
+            
+        <h:form id="dialogosCarro" rendered="#{controladorPaginaRestaurante.usuarioLogeado()}">
+            <p:dialog id="dialogoNuevoCarro" header="Nuevo Carro" widgetVar="dlgNuevoCarro" modal="true" resizable="false" closeOnEscape="true"
+                      onShow="PF('dlgNuevoCarro').initPosition()">
+            
+                <h2>¿Crear una nueva cesta?</h2>
+                <p>
+                    Ya tienes una cesta creada con otro restaurante,<br/>
+                    esta acción borrará la cesta actual y creara una<br/>
+                    con el restaurante del producto actual.
+                </p>
+                <p:panel>
+                    <p:commandButton update="growl,frmCarro" value="Si" action="#{controladorCarro.borraCarro()}" 
+                                     oncomplete="PF('dlgNuevoCarro').hide();PF('dlgAnadir').show();"/>
+                    <p:commandButton value="No" oncomplete="PF('dlgNuevoCarro').hide();"/>
+                </p:panel>
+                
+            </p:dialog>
+        
+            <p:dialog position="center center" id="dialogoAnadir" header="Añadir nuevo producto al carro" widgetVar="dlgAnadir" modal="true" resizable="false" closeOnEscape="true"
+                      onShow="PF('dlgAnadir').initPosition()">
+                <h2>#{controladorCarro.nuevoArticulo.producto.titulo}</h2>
+                <p:panel style="text-align: center !important">
+                    <o:graphicImage height="230px" value="#{controladorCarro.nuevoArticulo.producto.foto}" dataURI="true" rendered="#{controladorCarro.nuevoArticulo.producto.foto!=null}"/>
+                </p:panel>
+                
+                <p:panel style="text-align: center !important">
+                    <p:spinner value="#{controladorCarro.nuevoArticulo.cantidad}" min="0" style="width: 60px !important;">
+                        <p:ajax event="change" update="botonAnadir" />
+                        <p:ajax event="keyup" update="botonAnadir" />
+                    </p:spinner>
+                    <p:commandButton id="botonAnadir" value="#{(controladorCarro.nuevoArticulo.precio+controladorCarro.nuevoArticulo.precioEnvio)*controladorCarro.nuevoArticulo.cantidad 
+                                              }€   Añadir al carro" update="growl,frmCarro"
+                                              action="#{controladorCarro.anadirNuevoArticulo()}"
+                                              oncomplete="PF('dlgAnadir').hide();"/>
+                </p:panel>
+            </p:dialog>
+        </h:form>
+            
+    </ui:define>
+
+
+</ui:composition>
+

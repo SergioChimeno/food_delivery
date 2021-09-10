@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+
+    <ui:define name="content">
+        <h1 style="border-bottom: 1px solid #cbcccc;">
+            Pedidos
+        </h1>
+        <h:form id="formTablaPedidos">
+            <p:dataTable var="pedido" value="#{controladorAdminPedidos.pedidos}">
+
+                <p:column headerText="Estado">
+                    <o:graphicImage height="35px" name="icono_reloj.jpg" library="img" dataURI="true" 
+                                    rendered="#{pedido.estado == 'NUEVO' || pedido.estado == 'EN_PREPARACION'}"/>
+                    <o:graphicImage height="35px" name="icono_enviando.png" library="img" dataURI="true" rendered="#{pedido.estado == 'EN_CAMINO'}"/>
+                    <o:graphicImage height="35px" name="icono_caminando.jpg" library="img" dataURI="true" rendered="#{pedido.estado == 'ESPERANDO_CLIENTE'}"/>
+                    <o:graphicImage height="35px" name="icono_archivado.jpeg" library="img" dataURI="true" rendered="#{pedido.estado == 'ENTREGADO'}"/>
+                    <h:outputText value="#{pedido.estado.toString()}" />
+                </p:column>
+
+                <p:column headerText="Fecha">
+                    <h:outputText value="#{pedido.fecha}">
+                        <f:convertDateTime pattern="HH:mm - dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Tipo de entrega">
+                    <h:outputText value="#{pedido.recogida}" />
+                </p:column>
+
+                <p:column headerText="Precio" style="color:red">
+                    <h:outputText value="#{pedido.precioTotal}€" />
+                </p:column>
+
+                <p:column headerText="Cliente" filterBy="#{pedido.cliente.email}" filterMatchMode="contains">
+                    <h:outputText value="#{pedido.cliente.email}" />
+                </p:column>
+                
+                <p:column headerText="Detalles">
+                    <p:commandButton value="Ver mas detalles" style="text-align: center !important;width: 100% !important" 
+                                     action="#{controladorAdminPedidos.masDetallesPedido(pedido)}"/>
+                </p:column>
+                
+                <p:column headerText="Acciones">
+                    <p:commandLink action="#{controladorAdminPedidos.setPedidoSeleccionado(pedido)}"
+                                update="frmDialogoPedido" oncomplete="PF('dlgPedido').show()" >
+                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                    </p:commandLink>
+
+                    <p:commandLink update="formTablaPedidos,growl" action="#{controladorAdminPedidos.eliminarPedido(pedido)}">
+                        <o:graphicImage height="35px" name="icono_eliminar.svg" library="img" dataURI="true"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <p:dialog id="dialogoPedido" header="Datos del pedido" widgetVar="dlgPedido" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgPedido').initPosition()">
+            <h:form id="frmDialogoPedido">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="estado" value="Estado:"/>
+                    <p:selectOneMenu id="estado" value="#{controladorAdminPedidos.pedidoSeleccionado.estado}" required="true">
+                        <f:selectItems value="#{controladorAdminPedidos.estadosPedido}" var="estadoPedido" itemLabel="#{estadoPedido.toString()}"/>
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="fecha" value="Fecha:"/>
+                    <p:datePicker id="fecha" value="#{controladorAdminPedidos.pedidoSeleccionado.fecha}" showIcon="true" />
+                    
+                    <p:outputLabel for="tipoRecogida" value="Tipo de entrega: "/>
+                    <p:selectOneMenu id="tipoRecogida" value="#{controladorAdminPedidos.pedidoSeleccionado.recogida}" required="true">
+                        <f:selectItems value="#{controladorAdminPedidos.tiposRecogida}" var="tipoRecogida" itemLabel="#{tipoRecogida.label}"/>
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="precio" value="Precio:"/>
+                    <p:inputText id="precio" value="#{controladorAdminPedidos.pedidoSeleccionado.precioTotal}" required="true"/>
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Actualizar" update="formTablaPedidos,growl" action="#{controladorAdminPedidos.editarPedido()}"
+                                     oncomplete="PF('dlgPedido').hide()"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgPedido').hide()"/>
+                </p:panel>
+                
+            </h:form>      
+        </p:dialog>
+            
+    </ui:define>
+
+
+</ui:composition>

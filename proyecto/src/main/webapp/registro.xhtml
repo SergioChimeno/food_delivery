@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/plantilla.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        
+        
+        <h:form>
+            <p:messages id="msj"/>
+        
+            <p:fieldset legend="Datos de acceso" style="margin-bottom: 10px">
+                <h:panelGrid columns="2" columnClasses="label, value">
+                    <p:outputLabel for="email" value="Email:" />
+                    <p:inputText id="email" value="#{controladorRegistro.cliente.email}" required="true"/>
+
+                    <p:outputLabel for="username" value="Username:" />
+                    <p:inputText id="username" value="#{controladorRegistro.cliente.username}" required="true" label="username"/>
+
+                    <p:outputLabel for="contrasena"  value="Contraseña:" />
+                    <p:password id="contrasena" match="contrasena2" value="#{controladorRegistro.cliente.contrasena}" required="true" 
+                                feedback="true" promptLabel="Ingresa una contraseña" label="Contraseña"/>
+
+                    <p:outputLabel for="contrasena2" value="Repetir Contraseña:" />
+                    <p:password id="contrasena2"  required="true" label="Contraseña 2"/>
+
+                    <p:outputLabel for="imagen" value="Imagen de perfil"/>
+                    <p:fileUpload id="imagen" value="#{controladorRegistro.imagenPerfil}" mode="simple" skinSimple="true"/>
+                    
+                </h:panelGrid>
+            </p:fieldset>
+            
+            <p:fieldset legend="Detalles del cliente" style="margin-bottom: 10px">
+                <h:panelGrid columns="2" columnClasses="label, value">
+                    <p:outputLabel for="nombre" value="Nombre:" />
+                    <p:inputText id="nombre" value="#{controladorRegistro.cliente.nombre}" required="true" label="nombre"/>
+
+                    <p:outputLabel for="apellidos" value="Apellidos:" />
+                    <p:inputText id="apellidos" value="#{controladorRegistro.cliente.apellidos}" required="true" label="apellidos"/>
+
+                    <p:outputLabel for="telefono" value="Telefono:" />
+                    <p:inputText id="telefono" value="#{controladorRegistro.cliente.telefono}" required="true" label="telefono"/>
+                </h:panelGrid>
+            </p:fieldset>
+            
+            <p:fieldset legend="Dirección del cliente">
+                <h:panelGrid columns="2" columnClasses="label, value">
+                    <p:outputLabel for="pais" value="País:" />
+                    <p:inputText id="pais" value="#{controladorRegistro.direccion.pais}" required="true" label="pais"/>
+
+                    <p:outputLabel for="ciudad" value="Ciudad:" />
+                    <p:inputText id="ciudad" value="#{controladorRegistro.direccion.ciudad}" required="true" label="ciudad"/>
+
+                    <p:outputLabel for="calle" value="Calle:" />
+                    <p:inputText id="calle" value="#{controladorRegistro.direccion.calle}" required="true" label="calle"/>
+
+                    <p:outputLabel for="numero" value="Numero:" />
+                    <p:inputNumber id="numero" value="#{controladorRegistro.direccion.numero}" required="true"/>
+
+                    <p:outputLabel for="puerta" value="Puerta:" />
+                    <p:inputText id="puerta" value="#{controladorRegistro.direccion.puerta}" label="puerta"/>
+
+                    <p:outputLabel for="codigoPostal" value="Código postal:" />
+                    <p:inputText id="codigoPostal" value="#{controladorRegistro.direccion.codigoPostal}" required="true" label="codigoPostal"/>
+
+                    <p:outputLabel for="infoAdicional" value="Información adicional:" />
+                    <p:inputText id="infoAdicional" value="#{controladorRegistro.direccion.infoAdicional}" label="infoAdicional"/>
+                </h:panelGrid>
+                <p:commandButton action="#{controladorRegistro.registrar()}" value="Registrar" update="msj" ajax="false"/>
+            </p:fieldset>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

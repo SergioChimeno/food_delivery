@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+
+    <ui:define name="content">
+        <h3>Pedidos</h3>
+        <h:form id="formPedidos">
+            <p:dataTable var="pedido" value="#{controladorMisPedidos.pedidos}">
+
+                <p:column headerText="Estado">
+                    <o:graphicImage height="35px" name="icono_reloj.jpg" library="img" dataURI="true" 
+                                    rendered="#{pedido.estado == 'NUEVO' || pedido.estado == 'EN_PREPARACION'}"/>
+                    <o:graphicImage height="35px" name="icono_enviando.png" library="img" dataURI="true" rendered="#{pedido.estado == 'EN_CAMINO'}"/>
+                    <o:graphicImage height="35px" name="icono_caminando.jpg" library="img" dataURI="true" rendered="#{pedido.estado == 'ESPERANDO_CLIENTE'}"/>
+                    <o:graphicImage height="35px" name="icono_archivado.jpeg" library="img" dataURI="true" rendered="#{pedido.estado == 'ENTREGADO'}"/>
+                    <h:outputText value="#{pedido.estado.toString()}" />
+                </p:column>
+
+                <p:column headerText="Fecha">
+                    <h:outputText value="#{pedido.fecha}">
+                        <f:convertDateTime pattern="HH:mm - dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Tipo de entrega">
+                    <h:outputText value="#{pedido.recogida}" />
+                </p:column>
+
+                <p:column headerText="Precio" style="color:red">
+                    <h:outputText value="#{pedido.precioTotal}€" />
+                </p:column>
+                
+                <p:column headerText="Mas información">
+                    <p:commandButton value="Ver mas información" style="text-align: center !important;width: 100% !important" 
+                                     action="#{controladorMisPedidos.masDetallesPedido(pedido)}" update="dialogoArticulos" oncomplete="PF('dlgArticulos').show()"/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        
+        <p:dialog id="dialogoArticulos" header="Detalles del pedido" widgetVar="dlgArticulos"
+                  modal="true" resizable="false" closeOnEscape="true" onShow="PF('dlgArticulos').initPosition()">
+            
+            <h3 style="border-bottom: 1px solid #cbcccc;">
+                Detalles del pedido
+            </h3>
+            
+            <h:panelGrid columns="4">
+                
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Estado: </b><br/>
+                        #{controladorMisPedidos.pedidoActual.estado}
+                    </p>
+                </p:panel>
+                
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Fecha: </b><br/>
+                        #{controladorMisPedidos.pedidoActual.fecha}
+                    </p>
+                </p:panel>
+
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Tipo de recogida: </b><br/>
+                        #{controladorMisPedidos.pedidoActual.recogida} 
+                    </p>
+                </p:panel>
+                
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Precio Total: </b><br/>
+                        <h:outputText class="precio_total" value="#{controladorMisPedidos.pedidoActual.precioTotal}€"/>
+                    </p>
+                </p:panel>
+            </h:panelGrid>
+            
+            <p:panel rendered="#{controladorMisPedidos.pedidoActual.recogida=='ENVIO'}">
+                
+                <h3 style="border-bottom: 1px solid #cbcccc;">
+                    Detalles de la dirección
+                </h3>
+                
+                <h:panelGrid columns="7">
+
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>País: </b><br/>
+                            #{controladorMisPedidos.pedidoActual.direccion.pais}
+                        </p>
+                    </p:panel>
+                    
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Ciudad: </b><br/>
+                            #{controladorMisPedidos.pedidoActual.direccion.ciudad}
+                        </p>
+                    </p:panel>
+
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Calle: </b><br/>
+                            #{controladorMisPedidos.pedidoActual.direccion.calle}
+                        </p>
+                    </p:panel>
+                    
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Código postal: </b><br/>
+                            #{controladorMisPedidos.pedidoActual.direccion.codigoPostal} 
+                        </p>
+                    </p:panel>
+                    
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Numero: </b><br/>
+                            #{controladorMisPedidos.pedidoActual.direccion.numero}
+                        </p>
+                    </p:panel>
+                    
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Puerta: </b><br/>
+                            #{controladorMisPedidos.pedidoActual.direccion.puerta} 
+                        </p>
+                    </p:panel>
+                    
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Información adicional: </b><br/>
+                            #{controladorMisPedidos.pedidoActual.direccion.infoAdicional}
+                        </p>
+                    </p:panel>
+                </h:panelGrid>
+            </p:panel>
+            
+            
+            <h3 style="border-bottom: 1px solid #cbcccc;">
+                Articulos
+            </h3>
+            
+            <p:dataTable var="articulo" value="#{controladorMisPedidos.articulos}" style="max-width: 1200px !important">
+
+                <p:column headerText="Imagen">
+                    <o:graphicImage height="80px" value="#{articulo.producto.foto}" style="margin-left: 35px" 
+                                    dataURI="true"/>
+                </p:column>
+                
+                <p:column headerText="Titulo">
+                    <h:outputText value="#{articulo.producto.titulo}" />
+                </p:column>
+                
+                <p:column headerText="Categoría">
+                    <h:outputText value="#{articulo.producto.categoria.nombre}" />
+                </p:column>
+                
+                <p:column headerText="Tiempo estimado">
+                    <h:outputText value="#{articulo.producto.tiempoEstimado}" />
+                </p:column>
+                
+                <p:column headerText="Precio">
+                    <h:outputText value="#{articulo.precio}€" />
+                </p:column>
+
+                <p:column headerText="Precio envío">
+                    <h:outputText value="#{articulo.precioEnvio}€" />
+                </p:column>
+                
+                <p:column headerText="Cantidad">
+                    <h:outputText value="#{articulo.cantidad}" />
+                </p:column>
+            </p:dataTable>
+        </p:dialog>
+        
+    </ui:define>
+
+</ui:composition>

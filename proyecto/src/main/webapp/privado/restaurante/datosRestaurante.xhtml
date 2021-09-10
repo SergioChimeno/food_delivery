@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition    xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        template="./../../templates/plantilla.xhtml"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:panel class="centrar">
+            <p:panel class="panelDatos">
+        
+                
+                <h1 style="border-bottom: 1px solid #cbcccc;">
+                    <h:form>
+                    <p:commandLink oncomplete="PF('dlgDetalles').show()" update="frmDetalles">
+                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                    </p:commandLink>
+                    Detalles del restaurante:
+                    </h:form>
+                </h1>
+
+                <h:panelGrid columns="2" id="panelDetalles">
+
+                    <o:graphicImage height="300px" value="#{controladorDatosRestaurante.restaurante.imagen}" style="margin-left: 35px" dataURI="true"/>
+
+                    <p:panel class="panelTexto">
+                        <p>
+                            <b>Nombre: </b><br/>
+                            #{controladorDatosRestaurante.restaurante.username}
+                        </p>
+                        <p>
+                            <b>Horario: </b><br/>
+                            #{controladorDatosRestaurante.restaurante.horario}
+                        </p>
+                        <p>
+                            <b>Email: </b><br/>
+                            #{controladorDatosRestaurante.restaurante.email}
+                        </p>
+                        <p>
+                            <b>Telefono: </b><br/>
+                            #{controladorDatosRestaurante.restaurante.telefono} 
+                        </p>
+                        <p>
+                            <b>Información: </b><br/>
+                            #{controladorDatosRestaurante.restaurante.informacion}
+                        </p>
+                    </p:panel>
+
+                </h:panelGrid>
+                
+
+                
+                <h1 style="border-bottom: 1px solid #cbcccc;">
+                    
+                    <h:form>
+                        <p:commandLink oncomplete="PF('dlgDireccion').show()" update=":frmDireccion">
+                            <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                        </p:commandLink>
+                        Dirección:
+                    </h:form>
+                </h1>
+                
+                <p:panel id="panelDireccion" class="panelTexto">
+                    <p>
+                        <b>País: </b><br/>
+                        #{controladorDatosRestaurante.restaurante.direccion.pais}
+                    </p>
+                    <p>
+                        <b>Ciudad: </b><br/>
+                        #{controladorDatosRestaurante.restaurante.direccion.ciudad}
+                    </p>
+                    <p>
+                        <b>Calle: </b><br/>
+                        #{controladorDatosRestaurante.restaurante.direccion.calle}
+                    </p>
+                    <p>
+                        <b>Código postal: </b><br/>
+                        #{controladorDatosRestaurante.restaurante.direccion.codigoPostal} 
+                    </p>
+                    <p>
+                        <b>Numero: </b><br/>
+                        #{controladorDatosRestaurante.restaurante.direccion.numero}
+                    </p>
+                    <p>
+                        <b>Puerta: </b><br/>
+                        #{controladorDatosRestaurante.restaurante.direccion.puerta}
+                    </p>
+                    <p>
+                        <b>Información adicional: </b><br/>
+                        #{controladorDatosRestaurante.restaurante.direccion.infoAdicional}
+                    </p>
+                </p:panel>
+
+            </p:panel>
+
+        </p:panel>
+        
+
+        <p:dialog id="dialogoDetalles" header="Detalles del restaurante" widgetVar="dlgDetalles" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgDetalles').initPosition()">
+            <h:form id="frmDetalles" enctype="multipart/form-data">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="username" value="Nombre:"/>
+                    <p:inputText id="username" value="#{controladorDatosRestaurante.restaurante.username}" required="true"/>
+
+                    <p:outputLabel for="contrasena" value="Contraseña:"/>
+                    <p:inputText id="contrasena" value="#{controladorDatosRestaurante.restaurante.contrasena}" required="true"/>
+                    
+                    <p:outputLabel for="email" value="Email: "/>
+                    <p:inputText id="email" value="#{controladorDatosRestaurante.restaurante.email}" required="true"/>
+
+                    <p:outputLabel for="telefono" value="Telefono:"/>
+                    <p:inputText id="telefono" value="#{controladorDatosRestaurante.restaurante.telefono}" required="true"/>
+
+                    <p:outputLabel for="horario" value="Horario: "/>
+                    <p:inputTextarea cols="100" id="horario" value="#{controladorDatosRestaurante.restaurante.horario}" required="true"/>
+
+                    <p:outputLabel for="informacion" value="Información: "/>
+                    <p:inputTextarea cols="100" id="informacion" value="#{controladorDatosRestaurante.restaurante.informacion}"/>
+
+                    <p:outputLabel value="Imagen: "/>
+                    <p:fileUpload value="#{controladorDatosRestaurante.file}" mode="simple" skinSimple="true"/>
+                    
+                    
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Actualizar" update="panelDetalles,growl" action="#{controladorDatosRestaurante.actualizarRestaurante()}" oncomplete="PF('dlgDireccion').hide()" ajax="false"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgDetalles').hide()"/>
+                </p:panel>
+                
+            </h:form>      
+        </p:dialog>
+        
+        
+        <p:dialog id="dialogoDireccion" header="Dirección del restaurante" widgetVar="dlgDireccion" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgDireccion').initPosition()">
+            <h:form id="frmDireccion">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="pais" value="País:"/>
+                    <p:inputText id="pais" value="#{controladorDatosRestaurante.restaurante.direccion.pais}" required="true"/>
+
+                    <p:outputLabel for="ciudad" value="Ciudad:"/>
+                    <p:inputText id="ciudad" value="#{controladorDatosRestaurante.restaurante.direccion.ciudad}" required="true"/>
+
+                    <p:outputLabel for="calle" value="Calle: "/>
+                    <p:inputText id="calle" value="#{controladorDatosRestaurante.restaurante.direccion.calle}" required="true"/>
+
+                    <p:outputLabel for="codigoPostal" value="Código postal:"/>
+                    <p:inputText id="codigoPostal" value="#{controladorDatosRestaurante.restaurante.direccion.codigoPostal}" required="true"/>
+
+                    <p:outputLabel for="numero" value="Numero:"/>
+                    <p:inputText id="numero" value="#{controladorDatosRestaurante.restaurante.direccion.numero}" required="true"/>
+
+                    <p:outputLabel for="puerta" value="Puerta:"/>
+                    <p:inputText id="puerta" value="#{controladorDatosRestaurante.restaurante.direccion.puerta}"/>
+
+                    <p:outputLabel for="infoAdicional" value="Información adicional: "/>
+                    <p:inputText id="infoAdicional" value="#{controladorDatosRestaurante.restaurante.direccion.infoAdicional}"/>
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Actualizar" update="panelDireccion,growl" action="#{controladorDatosRestaurante.actualizarDireccion()}" oncomplete="PF('dlgDireccion').hide()"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgDireccion').hide()"/>
+                </p:panel>
+                
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
+

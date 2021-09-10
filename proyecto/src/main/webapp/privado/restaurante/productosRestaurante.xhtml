@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition    xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        template="./../../templates/plantilla.xhtml"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:of="http://omnifaces.org/functions">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+    
+    <!--     BUSCAR UN PRODUCTO      -->
+    <ui:define name="opcionesMenuBar">
+        <h:panelGroup id="busqueda" class="ui-inputgroup" style="display: inline-block !important;margin-right: 30px">
+            <p:inputText id="inputBusqueda" placeholder="Buscar" value="#{controladorProductosRestaurante.textoBusqueda}" style="width: 300px !important" />
+            <p:commandButton icon="pi pi-search" value="#{controladorProductosRestaurante.realizarBusqueda()}" styleClass="white-button">
+                <f:ajax  execute="busqueda" render="busqueda :formProductos" />
+            </p:commandButton>
+        </h:panelGroup>
+    </ui:define>
+
+    
+    <ui:define name="content">
+        <p:panel class="centrar">
+            <p:panel class="panelDatos">
+                
+                <h:form id="formProductos">
+                    <h1 style="border-bottom: 1px solid #cbcccc;">
+                        <p:commandLink action="#{controladorProductosRestaurante.setAccionNuevo()}" 
+                                       update="formEdicionProductos" oncomplete="PF('dlgProducto').show()" >
+                            <o:graphicImage height="35px" name="icono_anadir.svg" library="img" dataURI="true"/>
+                        </p:commandLink>
+                        Lista de Productos:
+                    </h1>
+                
+                
+                    <p:repeat id="listaProductos" value="#{controladorProductosRestaurante.productos}" var="producto">
+
+                        <h:panelGrid columns="2" >
+                            <o:graphicImage height="250px" value="#{producto.foto}" dataURI="true" style="margin-left: 35px" />
+
+                            <p:panel class="panelTexto">
+                                <h1>
+                                    #{producto.titulo} 
+                                    <span style="color: red">#{controladorProductosRestaurante.disponible(producto)}</span>
+                                    
+                                    <p:commandLink action="#{controladorProductosRestaurante.setAccionEditar(producto)}"
+                                                   update="formEdicionProductos" oncomplete="PF('dlgProducto').show()" >
+                                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                                    </p:commandLink>
+                                    <p:commandLink update="formProductos,growl" action="#{controladorProductosRestaurante.eliminarProducto(producto)}">
+                                        <o:graphicImage height="35px" name="icono_eliminar.svg" library="img" dataURI="true"/>
+                                    </p:commandLink>
+                                </h1>
+                                <b>Precio: </b>#{producto.precio}
+                                <br/>
+                                <b>Precio de envío: </b>#{producto.precioEnvio}
+                                <br/>
+                                <b>Tiempo estimado: </b>#{producto.tiempoEstimado}
+                                <p>
+                                    <b>Descripción: </b><br/>
+                                    #{producto.descripcion}
+                                </p>
+                            </p:panel>
+
+                            <p:panel class="centrar">
+                                <p:commandButton action="#{controladorProductosRestaurante.cargarComentarios(producto)}" update="frmValoraciones:panelValoraciones" value="Valoraciones" oncomplete="PF('dlgReviews').show();"/>
+
+                            </p:panel>
+
+                        </h:panelGrid>
+                        <hr/>
+                </p:repeat>
+                </h:form>
+            </p:panel>
+        </p:panel>
+        
+        
+        <!-- DIALOGO CON VALORACIONES -->
+        <h:form id="frmValoraciones">
+            <p:dialog id="dialogo" header="Valoraciones" widgetVar="dlgReviews" modal="true" resizable="false" closeOnEscape="true"
+                      onShow="PF('dlgReviews').initPosition()">
+                <h1 style="border-bottom: 1px solid #cbcccc;">Valoraciones:</h1>
+
+                <h:panelGroup id="panelValoraciones">
+                    <p:repeat value="#{controladorProductosRestaurante.valoraciones}" var="valoracion">
+
+                        <h:panelGrid columns="2" style="margin-bottom: 20px">
+                            <p:outputPanel>
+
+                                <o:graphicImage height="70px" value="#{valoracion.cliente.imagen}" 
+                                                rendered="#{valoracion.cliente.imagen!=null}" dataURI="true"/>
+
+                                <o:graphicImage height="70px" library="img" name="usuario_default.png" 
+                                                rendered="#{valoracion.cliente.imagen==null}" dataURI="true"/>
+
+                                <p>#{valoracion.cliente.nombre}</p>
+                            </p:outputPanel>
+
+                            <p:outputPanel style="margin-left: 25px">
+
+                                <p>
+                                    <b>#{valoracion.titulo}</b> 
+                                    <p:rating value="#{valoracion.estrellas}" disabled="true"></p:rating>
+                                </p>
+                                <p>
+                                    #{valoracion.opinion}
+                                </p>
+
+                            </p:outputPanel>
+                        </h:panelGrid>
+                        <hr/>
+                    </p:repeat>
+                </h:panelGroup>
+            </p:dialog>
+        </h:form>
+        
+        
+        <!-- DIALOGO EDIT/NUEVO-->
+        <p:dialog id="dialogoProducto" header="Producto" widgetVar="dlgProducto" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgProducto').initPosition()">
+            <h:form id="formEdicionProductos" enctype="multipart/form-data">
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="titulo" value="Titulo:"/>
+                    <p:inputText id="titulo" value="#{controladorProductosRestaurante.productoTemporal.titulo}" required="true"/>
+
+                    <p:outputLabel for="tiempoEstimado" value="Tiempo Estimado: "/>
+                    <p:inputText id="tiempoEstimado" value="#{controladorProductosRestaurante.productoTemporal.tiempoEstimado}"/>
+
+                    <p:outputLabel for="disponible" value="Disponible: "/>
+                    <p:selectOneMenu id="disponible" value="#{controladorProductosRestaurante.productoTemporal.disponible}">
+                        <f:selectItem itemLabel="Si" itemValue="#{true}" />
+                        <f:selectItem itemLabel="No" itemValue="#{false}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="precioEnvio" value="Precio de envio:"/>
+                    <p:inputNumber id="precioEnvio" symbol="€" value="#{controladorProductosRestaurante.productoTemporal.precioEnvio}" required="true"/>
+
+                    <p:outputLabel for="precio" value="Precio: "/>
+                    <p:inputNumber id="precio" symbol="€" value="#{controladorProductosRestaurante.productoTemporal.precio}" required="true"/>
+                    
+                    <p:outputLabel for="categoria" value="Categoria:  "/>
+                    <p:selectOneMenu id="categoria" value="#{controladorProductosRestaurante.productoTemporal.categoria.id}" required="true" > 
+                        <f:selectItems value="#{controladorProductosRestaurante.categorias}" var="categoria" 
+                                       itemLabel="#{categoria.nombre}" itemValue="#{categoria.id}" />
+                    </p:selectOneMenu>
+                    
+                    <p:outputLabel for="descripcion" value="Descripcion: "/>
+                    <p:inputTextarea cols="100" id="descripcion" value="#{controladorProductosRestaurante.productoTemporal.descripcion}"/>
+
+                    <p:outputLabel value="Imagen: "/>
+                    <p:fileUpload value="#{controladorProductosRestaurante.file}" mode="simple" skinSimple="true"/>
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Nuevo" update=":formProductos,growl" action="#{controladorProductosRestaurante.nuevoProducto()}" 
+                                     oncomplete="PF('dlgProducto').hide()" rendered="#{controladorProductosRestaurante.accion=='N'}" ajax="false"/>
+                    <p:commandButton value="Actualizar" update=":formProductos,growl" action="#{controladorProductosRestaurante.actualizarProducto()}" 
+                                     oncomplete="PF('dlgProducto').hide()" rendered="#{controladorProductosRestaurante.accion=='E'}" ajax="false"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgProducto').hide()"/>
+                </p:panel>
+                
+            </h:form>
+        </p:dialog>
+        
+        
+    </ui:define>
+
+</ui:composition>
+

@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosCuadricula.css"/>
+    </ui:define>
+    
+
+    <ui:define name="opcionesMenuBar">
+        <h:panelGroup id="busqueda" class="ui-inputgroup" style="display: inline-block !important;margin-right: 30px">
+            <p:inputText id="inputBusqueda" placeholder="Buscar" value="#{controladorRestaurantes.textoBusqueda}" style="width: 300px !important" />
+            <p:commandButton icon="pi pi-search" value="#{controladorRestaurantes.realizarBusqueda()}" styleClass="white-button">
+                <f:ajax  execute="busqueda" render="busqueda otroForm:gridRestaurantes" />
+            </p:commandButton>
+        </h:panelGroup>
+    </ui:define>
+
+    
+    <ui:define name="content">   
+        
+        <!-- RESTAURANTES -->
+        <h:form id="otroForm">
+        
+            <p:dataGrid id="gridRestaurantes" columns="4" layout="grid" value="#{controladorRestaurantes.restaurantes}" var="restaurante">
+                
+                <p:commandLink action="#{controladorRestaurantes.navegarAlRestaurante(restaurante)}">
+                    <p:panelGrid columns="1"  style="margin:10px 0px;text-align:center;width: 100%"  styleClass="ui-panelgrid-blank">
+
+                        <o:graphicImage width="288px" value="#{restaurante.imagen}" dataURI="true"/>
+
+                        <span style="width: 288px;text-align: left;display: inline-block">
+                            <b style="font-size: 20px">#{restaurante.username}</b>
+                            <br/>#{controladorRestaurantes.getResumenInformacion(restaurante)}
+                        </span>
+                    </p:panelGrid>
+                </p:commandLink>
+                
+                
+            </p:dataGrid>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

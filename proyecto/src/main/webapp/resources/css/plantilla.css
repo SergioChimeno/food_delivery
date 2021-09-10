@@ -1,0 +1,42 @@
+.cabecera {
+    padding: 30px;
+    text-align: center;
+    background: white;
+  }
+
+.cabecera h1 {
+    font-size: 50px;
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #D20005;
+
+}
+
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #ddd;
+    margin-top: 20px;
+}
+
+.ui-dialog{
+    position: absolute !important;
+    top: 50%;
+}
+
+.dialogo-carro{
+    top: 210px !important;
+    right: 20px !important;
+    left: auto !important;
+}
+
+.ui-panel .ui-panel-content{
+    border: none !important;
+}
+
+.precio_total{
+    color: red;
+    font-size: 19px;
+}

@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+
+    <ui:define name="content">
+        <h3 style="border-bottom: 1px solid #cbcccc;">
+            Detalles del pedido
+        </h3>
+
+        <h:panelGrid columns="4">
+
+            <p:panel class="panelTexto">
+                <p>
+                    <b>Estado: </b><br/>
+                    #{controladorAdminDetallesPedido.pedido.estado}
+                </p>
+            </p:panel>
+
+            <p:panel class="panelTexto">
+                <p>
+                    <b>Fecha: </b><br/>
+                    #{controladorAdminDetallesPedido.pedido.fecha}
+                </p>
+            </p:panel>
+
+            <p:panel class="panelTexto">
+                <p>
+                    <b>Tipo de recogida: </b><br/>
+                    #{controladorAdminDetallesPedido.pedido.recogida} 
+                </p>
+            </p:panel>
+
+            <p:panel class="panelTexto">
+                <p>
+                    <b>Precio Total: </b><br/>
+                    <h:outputText class="precio_total" value="#{controladorAdminDetallesPedido.pedido.precioTotal}€"/>
+                </p>
+            </p:panel>
+        </h:panelGrid>
+
+        <p:panel rendered="#{controladorAdminDetallesPedido.pedido.recogida=='ENVIO'}">
+
+            <h3 style="border-bottom: 1px solid #cbcccc;">
+                Detalles de la dirección
+            </h3>
+
+            <h:panelGrid columns="7">
+
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>País: </b><br/>
+                        #{controladorAdminDetallesPedido.pedido.direccion.pais}
+                    </p>
+                </p:panel>
+
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Ciudad: </b><br/>
+                        #{controladorAdminDetallesPedido.pedido.direccion.ciudad}
+                    </p>
+                </p:panel>
+
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Calle: </b><br/>
+                        #{controladorAdminDetallesPedido.pedido.direccion.calle}
+                    </p>
+                </p:panel>
+
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Código postal: </b><br/>
+                        #{controladorAdminDetallesPedido.pedido.direccion.codigoPostal} 
+                    </p>
+                </p:panel>
+
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Numero: </b><br/>
+                        #{controladorAdminDetallesPedido.pedido.direccion.numero}
+                    </p>
+                </p:panel>
+
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Puerta: </b><br/>
+                        #{controladorAdminDetallesPedido.pedido.direccion.puerta} 
+                    </p>
+                </p:panel>
+
+                <p:panel class="panelTexto">
+                    <p>
+                        <b>Información adicional: </b><br/>
+                        #{controladorAdminDetallesPedido.pedido.direccion.infoAdicional}
+                    </p>
+                </p:panel>
+            </h:panelGrid>
+        </p:panel>
+
+
+        <h3 style="border-bottom: 1px solid #cbcccc;">
+            Articulos
+        </h3>
+
+        <h:form id="frmTablaArticulos">
+            <p:dataTable var="articulo" value="#{controladorAdminDetallesPedido.articulos}">
+
+                <p:column headerText="Imagen">
+                    <o:graphicImage height="80px" value="#{articulo.producto.foto}" style="margin-left: 35px" 
+                                    dataURI="true"/>
+                </p:column>
+
+                <p:column headerText="Titulo">
+                    <h:outputText value="#{articulo.producto.titulo}" />
+                </p:column>
+
+                <p:column headerText="Categoría">
+                    <h:outputText value="#{articulo.producto.categoria.nombre}" />
+                </p:column>
+
+                <p:column headerText="Tiempo estimado">
+                    <h:outputText value="#{articulo.producto.tiempoEstimado}" />
+                </p:column>
+
+                <p:column headerText="Precio">
+                    <h:outputText value="#{articulo.precio}€" />
+                </p:column>
+
+                <p:column headerText="Precio envío">
+                    <h:outputText value="#{articulo.precioEnvio}€" />
+                </p:column>
+
+                <p:column headerText="Cantidad">
+                    <h:outputText value="#{articulo.cantidad}" />
+                </p:column>
+
+                <p:column headerText="Acciones">
+                    <p:commandLink action="#{controladorAdminDetallesPedido.setArticuloSeleccionado(articulo)}"
+                                update="frmDialogoArticulo" oncomplete="PF('dlgArticulo').show()" >
+                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                    </p:commandLink>
+
+                    <p:commandLink update="frmTablaArticulos,growl" action="#{controladorAdminDetallesPedido.eliminarArticulo(articulo)}">
+                        <o:graphicImage height="35px" name="icono_eliminar.svg" library="img" dataURI="true"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        
+        <p:dialog id="dialogoArticulo" header="Datos del Articulo" widgetVar="dlgArticulo" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgArticulo').initPosition()">
+            <h:form id="frmDialogoArticulo">
+                
+                
+                
+                <h:panelGrid columns="2">
+                    <p:outputLabel for="precio" value="Precio:"/>
+                    <p:inputText id="precio" value="#{controladorAdminDetallesPedido.articuloSeleccionado.precio}" required="true"/>
+                    
+                    <p:outputLabel for="precioEnvio" value="Precio envío:"/>
+                    <p:inputText id="precioEnvio" value="#{controladorAdminDetallesPedido.articuloSeleccionado.precioEnvio}" required="true"/>
+                    
+                    <p:outputLabel for="cantidad" value="Cantidad:"/>
+                    <p:inputText id="cantidad" value="#{controladorAdminDetallesPedido.articuloSeleccionado.cantidad}" required="true"/>
+                </h:panelGrid>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Actualizar" update="frmTablaArticulos,growl" action="#{controladorAdminDetallesPedido.editarArticulo()}"
+                                     oncomplete="PF('dlgArticulo').hide()"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgArticulo').hide()"/>
+                </p:panel>
+                
+            </h:form>      
+        </p:dialog>
+        
+    </ui:define>
+
+
+</ui:composition>

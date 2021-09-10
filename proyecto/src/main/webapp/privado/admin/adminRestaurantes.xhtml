@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/plantilla.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:of="http://omnifaces.org/functions"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+
+    
+    <ui:define name="content">
+        
+        <h1 style="border-bottom: 1px solid #cbcccc;">
+            <h:form>
+                <p:commandLink action="#{controladorAdminRestaurante.setAccionNuevo()}" 
+                    oncomplete="PF('dlgRestaurante').show()" update="frmDialogoRestaurante">
+                    <o:graphicImage height="35px" name="icono_anadir.svg" library="img" dataURI="true"/>
+                </p:commandLink>
+            Restaurantes
+            </h:form>
+        </h1>
+    
+        <h:form id="frmTablaRestaurantes" >
+            <p:dataTable var="restaurante" value="#{controladorAdminRestaurante.restaurantes}" tableStyle="width:auto">
+
+                <p:column headerText="Foto">
+                    <o:graphicImage height="50px" value="#{restaurante.imagen}" 
+                                    dataURI="true"/>
+                </p:column>
+                
+                <p:column headerText="Username"  filterBy="#{restaurante.username}" filterMatchMode="contains">
+                    <h:outputText value="#{restaurante.username}" />
+                </p:column>
+
+                <p:column headerText="Contraseña">
+                    <h:outputText value="********" />
+                </p:column>
+            
+                <p:column headerText="Email"  filterBy="#{restaurante.email}" filterMatchMode="contains">
+                    <h:outputText value="#{restaurante.email}" />
+                </p:column>
+                
+                <p:column headerText="Telefono"  filterBy="#{restaurante.telefono}" filterMatchMode="contains">
+                    <h:outputText value="#{restaurante.telefono}" />
+                </p:column>
+                
+                <p:column headerText="Direccion">
+                    <h:outputText value="#{restaurante.direccion}" />
+                </p:column>
+
+                <p:column headerText="Horario">
+                    <h:outputText value="#{restaurante.horario}" />
+                </p:column>
+                
+                <p:column headerText="Información">
+                    <h:outputText value="#{restaurante.informacion}" />
+                </p:column>
+
+                <p:column headerText="Productos">
+                    <p:commandButton value="Productos" style="text-align: center !important;width: 100% !important" 
+                                     action="#{controladorAdminRestaurante.navegarAProductos(restaurante)}"/>
+                </p:column>
+                
+                <p:column headerText="Acciones">
+                    <p:commandLink action="#{controladorAdminRestaurante.setAccionEditar(restaurante)}"
+                                update="frmDialogoRestaurante" oncomplete="PF('dlgRestaurante').show()" >
+                        <o:graphicImage height="35px" name="icono_editar.png" library="img" dataURI="true"/>
+                    </p:commandLink>
+
+                    <p:commandLink update="frmTablaRestaurantes,growl" action="#{controladorAdminRestaurante.eliminarRestaurante(r)}">
+                        <o:graphicImage height="35px" name="icono_eliminar.svg" library="img" dataURI="true"/>
+                    </p:commandLink>
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+        
+        
+        <p:dialog id="dialogoRestaurante" header="Datos" widgetVar="dlgRestaurante" modal="true" resizable="false" closeOnEscape="true"
+                  onShow="PF('dlgRestaurante').initPosition()">
+            <h:form id="frmDialogoRestaurante" enctype="multipart/form-data">
+                
+                <p:fieldset legend="Datos del restaurante" style="margin-bottom: 10px">
+                    <h:panelGrid columns="2">
+
+                        <p:outputLabel for="username" value="Nombre:"/>
+                        <p:inputText id="username" value="#{controladorAdminRestaurante.restaurante.username}" required="true"/>
+
+                        <p:outputLabel for="contrasena" value="Contraseña:"/>
+                        <p:inputText id="contrasena" value="#{controladorAdminRestaurante.restaurante.contrasena}" required="true"/>
+
+                        <p:outputLabel for="email" value="Email: "/>
+                        <p:inputText id="email" value="#{controladorAdminRestaurante.restaurante.email}" required="true"/>
+
+                        <p:outputLabel for="telefono" value="Telefono:"/>
+                        <p:inputText id="telefono" value="#{controladorAdminRestaurante.restaurante.telefono}" required="true"/>
+                        
+                        <p:outputLabel for="horario" value="Horario: "/>
+                        <p:inputTextarea cols="100" id="horario" value="#{controladorAdminRestaurante.restaurante.horario}" required="true"/>
+
+                        <p:outputLabel for="informacion" value="Información:"/>
+                        <p:inputTextarea cols="100" id="informacion" value="#{controladorAdminRestaurante.restaurante.informacion}" required="true"/>
+
+                        <p:outputLabel value="Imagen: "/>
+                        <p:fileUpload value="#{controladorAdminRestaurante.file}" mode="simple" skinSimple="true"/>
+                    </h:panelGrid>
+                </p:fieldset>
+                    
+                <p:fieldset legend="Datos de la dirección" style="margin-bottom: 10px">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel for="pais" value="País:"/>
+                        <p:inputText id="pais" value="#{controladorAdminRestaurante.restaurante.direccion.pais}" required="true"/>
+
+                        <p:outputLabel for="ciudad" value="Ciudad:"/>
+                        <p:inputText id="ciudad" value="#{controladorAdminRestaurante.restaurante.direccion.ciudad}" required="true"/>
+
+                        <p:outputLabel for="calle" value="Calle: "/>
+                        <p:inputText id="calle" value="#{controladorAdminRestaurante.restaurante.direccion.calle}" required="true"/>
+
+                        <p:outputLabel for="codigoPostal" value="Código postal:"/>
+                        <p:inputText id="codigoPostal" value="#{controladorAdminRestaurante.restaurante.direccion.codigoPostal}" required="true"/>
+
+                        <p:outputLabel for="numero" value="Numero:"/>
+                        <p:inputText id="numero" value="#{controladorAdminRestaurante.restaurante.direccion.numero}" required="true"/>
+
+                        <p:outputLabel for="puerta" value="Puerta:"/>
+                        <p:inputText id="puerta" value="#{controladorAdminRestaurante.restaurante.direccion.puerta}"/>
+
+                        <p:outputLabel for="infoAdicional" value="Información adicional: "/>
+                        <p:inputText id="infoAdicional" value="#{controladorAdminRestaurante.restaurante.direccion.infoAdicional}"/>
+                    </h:panelGrid>
+                </p:fieldset>
+                
+                <p:panel class="centrar">
+                    <p:commandButton value="Nuevo" update="frmTablaRestaurantes,growl" action="#{controladorAdminRestaurante.nuevoRestaurante()}"
+                                     oncomplete="PF('dlgRestaurante').hide()" ajax="false" 
+                                     rendered="#{controladorAdminRestaurante.accion == 'N'}"/>
+                    <p:commandButton value="Actualizar" update="frmTablaRestaurantes,growl" action="#{controladorAdminRestaurante.actualizarRestaurante()}"
+                                     oncomplete="PF('dlgRestaurante').hide()" ajax="false" 
+                                     rendered="#{controladorAdminRestaurante.accion == 'E'}"/>
+                    <p:commandButton value="Cancelar" onclick="PF('dlgRestaurante').hide()"/>
+                </p:panel>
+                
+            </h:form>      
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../../templates/plantilla.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="cssAdicional">
+        <h:outputStylesheet library="css" name="estilosMostrarDatos.css"/>
+    </ui:define>
+    
+    
+    <ui:define name="content">
+
+        <p:panel class="centrar">
+            <p:panel class="panelDatos">
+                
+                <h:form id="frmTramitar">
+                    <h3 style="border-bottom: 1px solid #cbcccc;">
+                        Tipo de entrega:
+                    </h3>
+                    <div class="ui-fluid">
+                        <div class="p-field">
+                            <p:selectOneMenu id="tipoRecogida" value="#{controladorTramitarPedido.estePedido.recogida}" required="true">
+                                <f:selectItems value="#{controladorTramitarPedido.tiposRecogida}" var="tipoRecogida" itemLabel="#{tipoRecogida.label}"/>
+                                <p:ajax event="change" update="frmTramitar" listener="#{controladorTramitarPedido.estePedido.calcularPrecioTotal()}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+
+                    <p:panel id="panelDirecciones" rendered="#{controladorTramitarPedido.estePedido.recogida=='ENVIO'}">
+                        <h3 style="border-bottom: 1px solid #cbcccc;">
+                            Seleccione una direccion:
+                        </h3>
+                        <div class="ui-fluid">
+                            <div class="p-field">
+                                <p:selectOneMenu id="direcciones" value="#{controladorTramitarPedido.direccionTemporal.id}"> 
+                                    <f:selectItems value="#{controladorTramitarPedido.direcciones}" var="direccion" 
+                                                   itemLabel="#{direccion.toString()}" itemValue="#{direccion.id}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </p:panel>
+
+                    <h3 style="border-bottom: 1px solid #cbcccc;">
+                        Metodo de pago:
+                    </h3>
+                    <p>El restaurante se encagará de efectuar el cobro en el momento de la entrega</p>
+                    
+                    
+                    <h3 style="border-bottom: 1px solid #cbcccc;">
+                        Confirmación:
+                    </h3>
+                    <h:outputText class="precio_total" value="Total: #{controladorTramitarPedido.estePedido.precioTotal}€"/>
+                    <p:commandButton value="Aceptar" style="margin-left: 20px" action="#{controladorTramitarPedido.efectuarPedido()}" update="growl"/>
+                </h:form>
+                
+            </p:panel>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>
